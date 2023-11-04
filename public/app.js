@@ -36,8 +36,19 @@ async function createRoom() {
   peerConnection = new RTCPeerConnection(configuration);
 
   registerPeerConnectionListeners();
+  
+const offer = await peerConnection.createOffer();
+await peerConnection.setLocalDescription(offer);
 
-  // Add code for creating a room here
+const roomWithOffer = {
+    offer: {
+        type: offer.type,
+        sdp: offer.sdp
+    }
+}
+const roomRef = await db.collection('rooms').add(roomWithOffer);
+const roomId = roomRef.id;
+document.querySelector('#currentRoom').innerText = `Current room is ${roomId} - You are the caller!`
   
   // Code for creating room above
   
